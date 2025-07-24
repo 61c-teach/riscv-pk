@@ -23,6 +23,25 @@ struct iovec {
 
 #define MAX_BUF 512
 
+void sys_print_char(char ch) {
+	sys_write(1, &ch, 1);
+}
+
+void sys_print_unsigned(unsigned long num) {
+  if (num >= 10)
+    sys_print_unsigned(num / 10);
+  sys_print_char('0' + (num % 10));
+}
+
+void sys_print_int(long num) {
+  if (num < 0) {
+    sys_print_char('-');
+	sys_print_unsigned((unsigned long)(-(num + 1)) + 1);
+  } else {
+    sys_print_unsigned((unsigned long)num);
+  }
+}
+
 void sys_exit(int code)
 {
   if (current.cycle0) {
