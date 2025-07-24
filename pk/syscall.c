@@ -23,17 +23,27 @@ struct iovec {
 
 #define MAX_BUF 512
 
-void sys_print_char(char ch) {
-	sys_write(1, &ch, 1);
+void sys_print_char(char ch)
+{
+  // stdout in POSIX systems is file descriptor 1
+  file_t *f = file_get(1);
+  if (f) {
+      if (file_write(f, &ch, 1) < 0)
+        break;
+    }
+    file_decref(f);
+  }
 }
 
-void sys_print_unsigned(unsigned long num) {
+void sys_print_unsigned(unsigned long num)
+{
   if (num >= 10)
     sys_print_unsigned(num / 10);
   sys_print_char('0' + (num % 10));
 }
 
-void sys_print_int(long num) {
+void sys_print_int(long num)
+{
   if (num < 0) {
     sys_print_char('-');
 	sys_print_unsigned((unsigned long)(-(num + 1)) + 1);
