@@ -34,20 +34,20 @@ void sys_print_char(char ch)
   file_decref(f);
 }
 
-void sys_print_unsigned(unsigned long num)
+void __print_unsigned(unsigned long num)
 {
   if (num >= 10)
-    sys_print_unsigned(num / 10);
+    __print_unsigned(num / 10);
   sys_print_char('0' + (num % 10));
 }
 
-void sys_print_int(long num)
+void sys_print_integer(long num)
 {
   if (num < 0) {
     sys_print_char('-');
-    sys_print_unsigned((unsigned long)(-(num + 1)) + 1);
+    __print_unsigned((unsigned long)(-(num + 1)) + 1);
   } else {
-    sys_print_unsigned((unsigned long)num);
+    __print_unsigned((unsigned long)num);
   }
 }
 
@@ -70,6 +70,11 @@ void sys_exit(int code)
         (int)((100ULL*dc)/di % 10));
   }
   shutdown(code);
+}
+
+void sys_exit_nocode()
+{
+  sys_exit(0);
 }
 
 ssize_t sys_read(int fd, char* buf, size_t n)
@@ -779,6 +784,15 @@ static int sys_stub_nosys()
 long do_syscall(long a0, long a1, long a2, long a3, long a4, long a5, unsigned long n)
 {
   const static void* syscall_table[] = {
+#ifdef VENUS_COMPATIBILITY_MODE
+    [SYS_venus_print_integer] = sys_print_integer,
+    [SYS_venus_print_string] = sys_print_string,
+    [SYS_venus_sbrk] = sys_sbrk,
+    [SYS_venus_exit] = sys_exit_nocode,
+    [SYS_venus_print_char] = sys_print_char,
+    [SYS_venus_exit_with_code] = sys_exit,
+#endif
+
     [SYS_exit] = sys_exit,
     [SYS_exit_group] = sys_exit,
     [SYS_read] = sys_read,

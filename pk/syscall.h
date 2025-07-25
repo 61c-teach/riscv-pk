@@ -3,6 +3,13 @@
 #ifndef _PK_SYSCALL_H
 #define _PK_SYSCALL_H
 
+#define SYS_venus_print_integer 1
+#define SYS_venus_print_string 4
+#define SYS_venus_sbrk 9
+#define SYS_venus_exit 10
+#define SYS_venus_print_char 11
+#define SYS_venus_exit_with_code 17
+
 #define SYS_exit 93
 #define SYS_exit_group 94
 #define SYS_getpid 172
