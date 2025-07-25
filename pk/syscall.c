@@ -27,12 +27,11 @@ void sys_print_char(char ch)
 {
   // stdout in POSIX systems is file descriptor 1
   file_t *f = file_get(1);
-  if (f) {
-      if (file_write(f, &ch, 1) < 0)
-        return;
-    }
-    file_decref(f);
-  }
+  if (!f)
+	return;
+  if (file_write(f, &ch, 1) < 0)
+    return;
+  file_decref(f);
 }
 
 void sys_print_unsigned(unsigned long num)
