@@ -29,7 +29,7 @@ void sys_print_char(char ch)
   file_t *f = file_get(1);
   if (f) {
       if (file_write(f, &ch, 1) < 0)
-        break;
+        return;
     }
     file_decref(f);
   }
@@ -46,7 +46,7 @@ void sys_print_int(long num)
 {
   if (num < 0) {
     sys_print_char('-');
-	sys_print_unsigned((unsigned long)(-(num + 1)) + 1);
+    sys_print_unsigned((unsigned long)(-(num + 1)) + 1);
   } else {
     sys_print_unsigned((unsigned long)num);
   }
