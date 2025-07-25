@@ -52,6 +52,11 @@ void sys_print_int(long num)
   }
 }
 
+size_t sys_sbrk(ssize_t incr)
+{
+  return do_sbrk(incr);
+}
+
 void sys_exit(int code)
 {
   if (current.cycle0) {

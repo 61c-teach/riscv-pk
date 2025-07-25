@@ -458,6 +458,30 @@ uintptr_t do_brk(size_t addr)
   return addr;
 }
 
+uintptr_t __do_sbrk(ssize_t incr) {
+  uintptr_t oldbrk = current.brk;
+  if ((incr > 0 && oldbrk + incr < oldbrk) || (incr < 0 && oldbrk < (uintptr_t)(-incr)))
+    return (uintptr_t)-1;
+
+  uintptr_t newbrk = oldbrk + incr;
+  if (newbrk < current.brk_min || newbrk > current.brk_max)
+    return (uintptr_t)-1;
+
+  uintptr_t result = __do_brk(newbrk);
+  if (result != newbrk)
+    return (uintptr_t)-1;
+  return oldbrk;
+}
+
+uintptr_t do_sbrk(ssize_t addr)
+{
+  spinlock_lock(&vm_lock);
+    addr = __do_sbrk(addr);
+  spinlock_unlock(&vm_lock);
+
+  return addr;
+}
+
 uintptr_t do_mremap(uintptr_t addr, size_t old_size, size_t new_size, int flags)
 {
   return -ENOSYS;
