@@ -51,6 +51,19 @@ void sys_print_integer(long num)
   }
 }
 
+void sys_print_string(const char *str)
+{
+  char str_buf[MAX_BUF];
+  if (!strcpy_from_user(str_buf, str, MAX_BUF))
+    return;
+  file_t *f = file_get(1);
+  if (!f)
+    return;
+  if (file_write(f, str_buf, strlen(str_buf)) < 0)
+    return;
+  file_decref(f);
+}
+
 size_t sys_sbrk(ssize_t incr)
 {
   return do_sbrk(incr);
